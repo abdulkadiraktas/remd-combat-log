@@ -1,12 +1,14 @@
 local webhook = ""
-
-
-
-RegisterCommand("combat", function(source, args, rawcmd)
-    TriggerClientEvent("pixel_antiCL:show", source)
-end)
-
-AddEventHandler("playerDropped", function(reason)
+-- Test Command for testing the log system
+    RegisterCommand("combat", function(source, args, rawcmd)
+        TriggerClientEvent("remd-combat-log:show", source)
+    end)
+    RegisterCommand("testlog", function(source, args, rawcmd)
+        local reason = "Test"
+        writelog(source,reason)
+    end)
+-- End of test commands
+function writelog(source,reason)
     local crds = GetEntityCoords(GetPlayerPed(source))
     local id = source
     local identifier = ""
@@ -15,12 +17,15 @@ AddEventHandler("playerDropped", function(reason)
     else
         identifier = GetPlayerIdentifier(source, 1)
     end
-    TriggerClientEvent("pixel_anticl", -1, id, crds, identifier, reason)
+    TriggerClientEvent("remd-combat-log", -1, id, crds, identifier, reason)
     if Config.LogSystem then
         SendLog(id, crds, identifier, reason)
     end
+end
+AddEventHandler("playerDropped", function(reason)
+    local _src = source
+    writelog(_src,reason)
 end)
-
 function SendLog(id, crds, identifier, reason)
     local name = GetPlayerName(id)
     local date = os.date('*t')
